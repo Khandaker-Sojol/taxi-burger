@@ -52,7 +52,8 @@
             </div>
         </nav>
     </header>
-    <main class="grid md:grid-cols-12 p-14 gap-6">
+    <main class="grid p-6 md:grid-cols-12 md:p-14 gap-6">
+        <!-- category section -->
         <section class="md:col-span-3 bg-[#FEBF00] rounded-2xl p-4">
             <div class="rounded-3xl xl bg-white">
                 <h1 class="font-bold text-2xl text-center">
@@ -66,20 +67,47 @@
             </div>
         </section>
 
+        <!-- Foods Section -->
         <section id="foods" class="md:col-span-6">
             <h1 class="text-center text-2xl font-bold mt-4">Our Foods</h1>
 
             <div class="divider"></div>
+            <!-- food container -->
+            <div id="foods-container">
+
+
+            </div>
         </section>
+
+        <!-- Cart Section -->
         <section class="md:col-span-3 border-2 border-[#FEBF00] rounded-2xl">
 
             <div class="p-4">
                 <h1 class="text-center text-2xl font-bold">Cart</h1>
                 <div class="divider"></div>
             </div>
+            <!-- cart container -->
+            <div id="cart-conainer">
 
+            </div>
         </section>
     </main>
+    <!-- Open the modal using ID.showModal() method -->
+    <!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
+
+    <dialog id="food-details-modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <div class="" id="details-container">
+
+            </div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn text-3xl btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+    <script src="./Script/index.js"></script>
 </body>
 
 </html>
