@@ -1,19 +1,39 @@
+const spinner = document.getElementById("spinner");
+const showLoading = () => spinner.classList.remove("hidden");
+const hideLoading = () => spinner.classList.add("hidden");
+
 const LoadCategories = () => {
+  showLoading();
   fetch(" https://taxi-kitchen-api.vercel.app/api/v1/categories")
     .then((res) => res.json())
-    .then((data) => displayCategories(data.categories));
+    .then((data) => displayCategories(data.categories))
+    .finally(() => hideLoading());
 };
 
 const loadRandomFoods = () => {
+  showLoading();
   fetch(" https://taxi-kitchen-api.vercel.app/api/v1/foods/random")
     .then((res) => res.json())
-    .then((data) => displayFoods(data.foods));
+    .then((data) => displayFoods(data.foods))
+    .finally(() => hideLoading());
 };
 
 const loadFoodByCategory = (id) => {
+  const allBtns = document.querySelectorAll(".category-btn");
+  console.log(allBtns);
+  for (btn of allBtns) {
+    btn.classList.remove("active");
+  }
+
+  const currentBtn = document.getElementById(`category-btn-${id}`);
+  console.log(currentBtn);
+  currentBtn.classList.add("active");
+
+  showLoading();
   fetch(`https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`)
     .then((res) => res.json())
-    .then((data) => displayFoods(data.foods));
+    .then((data) => displayFoods(data.foods))
+    .finally(() => hideLoading());
 };
 
 const loadFoodDetails = (id) => {
@@ -32,7 +52,7 @@ const displayCategories = (categories) => {
     // 3.Create element
     const categoryDiv = document.createElement("div");
     categoryDiv.innerHTML = `
-        <div onclick="loadFoodByCategory(${category.id})" class="bg-white shadow rounded-lg cursor-pointer flex justify-start items-center mb-3 gap-1">
+        <div id="category-btn-${category.id}" onclick="loadFoodByCategory(${category.id})" class="bg-white shadow rounded-lg cursor-pointer category-btn flex justify-start items-center mb-3 gap-1">
             <img class="w-16 py-1" src = ${category.categoryImg} alt="">
             <button class="cursor-pointer text-sm font-semibold">${category.categoryName}</button>
         </div>
@@ -98,5 +118,6 @@ const displayDetails = (food) => {
   `;
   document.getElementById("food-details-modal").showModal();
 };
+
 LoadCategories();
 loadRandomFoods();
