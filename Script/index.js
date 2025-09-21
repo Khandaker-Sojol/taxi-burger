@@ -2,6 +2,9 @@ const spinner = document.getElementById("spinner");
 const showLoading = () => spinner.classList.remove("hidden");
 const hideLoading = () => spinner.classList.add("hidden");
 
+let cart = [];
+let total = 0;
+
 const LoadCategories = () => {
   showLoading();
   fetch(" https://taxi-kitchen-api.vercel.app/api/v1/categories")
@@ -28,6 +31,9 @@ const loadFoodByCategory = (id) => {
   const currentBtn = document.getElementById(`category-btn-${id}`);
   console.log(currentBtn);
   currentBtn.classList.add("active");
+
+  const foodsContainer = document.getElementById("foods-container");
+  foodsContainer.innerHTML = "";
 
   showLoading();
   fetch(`https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`)
@@ -73,10 +79,10 @@ const displayFoods = (foods) => {
     const foodDiv = document.createElement("div");
     //
     foodDiv.innerHTML = `
-                <div onclick="loadFoodDetails(${food.id})" class="p-5 mb-5 bg-white flex gap-3 shadow rounded-xl">
-                    <div class="img flex-1">
+                <div  class="p-5 mb-5 bg-white flex gap-5 shadow rounded-xl">
+                    <div onclick="loadFoodDetails(${food.id})" class="img flex-1">
                         <img src="${food.foodImg}" alt=""
-                            class="min-w-[160px] rounded-xl min-h-[160px] object-cover food-img">
+                            class="min-w-[140px] rounded-xl min-h-[160px] object-cover food-img">
                     </div>
                     <div class="flex-2 flex flex-col justify-center">
                         <h1 class="text-xl font-bold food-title">
@@ -91,7 +97,7 @@ const displayFoods = (foods) => {
                             </h2>
                         </div>
 
-                        <button class=" w-1/2 btn btn-warning">
+                        <button onclick="addToCart(this)" class=" btn btn-warning md:w-1/2">
                             <i class="fa-solid fa-square-plus"></i>
                             Add This Item
                         </button>
@@ -121,3 +127,75 @@ const displayDetails = (food) => {
 
 LoadCategories();
 loadRandomFoods();
+
+const addToCart = (btn) => {
+  const foodCard = btn.parentNode.parentNode;
+  const foodImg = foodCard.querySelector(".food-img").src;
+  const foodTitle = foodCard.querySelector(".food-title").innerText;
+  const foodPrice = Number(foodCard.querySelector(".food-price").innerText);
+
+  const existingItem = cart.find((item) => item.foodTitle === foodTitle);
+
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    const selectedItem = {
+      id: cart.length + 1,
+      foodTitle: foodTitle,
+      foodImg: foodImg,
+      foodPrice: foodPrice,
+      quantity: 1,
+    };
+    cart.push(selectedItem);
+  }
+
+  total = 0;
+  cart.forEach((item) => (total += item.foodPrice * item.quantity));
+
+  displayCart(cart);
+  displayTotal(total);
+  alert(`${foodTitle} add to card successfully`);
+};
+
+const displayTotal = (value) => {
+  document.getElementById("total-price").innerHTML = value;
+};
+
+const displayCart = (cart) => {
+  const cartContainer = document.getElementById("cart-container");
+  cartContainer.innerHTML = "";
+
+  for (item of cart) {
+    const cartDiv = document.createElement("div");
+    cartDiv.innerHTML = `
+        <div class="flex items-center justify-between mb-4 mx-5 bg-gray-50 relative  p-3 rounded-xl shadow-sm">
+            <div class="flex items-center space-x-3">
+                <img src="${item.foodImg}" alt="Food" class="w-14 h-14 rounded-lg object-cover food-img">
+                <div>
+                    <h3 class="text-sm font-medium food-title">${item.foodTitle}</h3>
+                    <p class="text-sm font-semibold text-yellow-600"><span>${item.quantity}</span> × $<span class="food-price">${item.foodPrice}</span> BDT</p>
+                </div>
+            </div>
+            <button onclick="removeCart(this)" class="text-white w-8 h-8 bg-red-600 text-lg rounded-full cursor-pointer absolute top-1 right-1 font-bold"> <i class="fa-solid fa-xmark "></i></button>
+        </div>
+    `;
+    cartContainer.append(cartDiv);
+  }
+};
+
+const removeCart = (btn) => {
+  const item = btn.parentNode;
+  const foodTitle = item.querySelector(".food-title").innerText;
+
+  const foodPrice = Number(item.querySelector(".food-price").innerText);
+  console.log(foodPrice);
+  // remove from cart
+  cart = cart.filter((item) => item.foodTitle != foodTitle);
+
+  // rest total
+  total = 0;
+  cart.forEach((item) => (total += item.foodPrice));
+
+  displayCart(cart);
+  displayTotal(total);
+};
